@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import DashboardLayout from './components/layout/dashboard-layout';
+import ContentCreate from './components/dashboard/content-create';
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
 		children:[
 			{
 				index:true,
-				element:<h1>Dashboard main page</h1>
+				element:<ContentCreate/>
 			}
 		]
   },

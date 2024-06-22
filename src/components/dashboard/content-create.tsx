@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { FormEvent, useState } from "react"
 import { Loader2 } from "lucide-react"
+import { generateArticle } from "@/utils/openai"
 
 export default function ContentCreate(){
 
@@ -14,15 +15,16 @@ export default function ContentCreate(){
 		description:'',
 	});
 
-	const handleSubmit = (event:FormEvent) =>{
+	const  handleSubmit = async (event:FormEvent) =>{
 		event.preventDefault();
 		setIsLoading(true);
-		console.log(form);
+		const result = await generateArticle(form.title, form.description);
+		console.log(result);
+		setIsLoading(false);
 	}
 
 	const handleChange = (event:FormEvent<HTMLInputElement| HTMLTextAreaElement>)=>{
 		const {name, value} = event.currentTarget;
-		console.log(name, value); 
 		setForm({...form, [name]:value})
 	}
 

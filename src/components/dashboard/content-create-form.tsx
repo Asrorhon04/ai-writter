@@ -4,39 +4,30 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { FormEvent, useState } from "react"
 import { Loader2 } from "lucide-react"
-import { generateArticle } from "@/utils/openai"
-import ContentViewer from "./content-viewer"
+import { ContentCreateRequestParam } from "@/shared/types/content-create-request-pareams"
 
-export default function ContentCreate(){
+type ContentCreateFormProps ={
+	isLoading: boolean;
+	onSubmit:(params:ContentCreateRequestParam)=>void;
+}
+export default function ContentCreateForm({isLoading, onSubmit}:ContentCreateFormProps){
 
-	const [isLoading, setIsLoading]=useState(false);
-
-	const [form, setForm] = useState({
+	const [form, setForm] = useState<ContentCreateRequestParam>({
 		title:'',
 		description:'',
 	});
-
-	const [content,setContent] = useState<string | null>(null);
-
-	const  handleSubmit = async (event:FormEvent) =>{
-		event.preventDefault();
-		setIsLoading(true);
-		const result = await generateArticle(form.title, form.description);
-		setContent(result);
-		setIsLoading(false);
-	}
 
 	const handleChange = (event:FormEvent<HTMLInputElement| HTMLTextAreaElement>)=>{
 		const {name, value} = event.currentTarget;
 		setForm({...form, [name]:value})
 	}
 
+	const handleSubmit = (event: FormEvent)=> {
+		event.preventDefault();
+		onSubmit(form)
+	}
+
 	return(
-		<div> 
-				<h1 className="text-3xl font-semibold">Article Writter</h1>
-				{content ? (
-					<ContentViewer content={content}/>
-				) :	(
 					<form action="" className="mt-4" onSubmit={handleSubmit}>
 						<div className="grid w-full gap-1.5 mb-4"> 
 							<Label htmlFor="title">Title</Label>
@@ -60,7 +51,5 @@ export default function ContentCreate(){
 							Generate
 						</Button>
 					</form> 
-				)}
-		</div>
 	)
 }

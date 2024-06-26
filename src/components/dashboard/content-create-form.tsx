@@ -1,55 +1,81 @@
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { FormEvent, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { ContentCreateRequestParam } from "@/shared/types/content-create-request-pareams"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 
 type ContentCreateFormProps ={
 	isLoading: boolean;
 	onSubmit:(params:ContentCreateRequestParam)=>void;
 }
-export default function ContentCreateForm({isLoading, onSubmit}:ContentCreateFormProps){
 
-	const [form, setForm] = useState<ContentCreateRequestParam>({
-		title:'',
-		description:'',
-	});
+const formSchema = z.object({
+  title: z.string().min(2).max(50),
+	description: z.string().min(50).max(1000),
+})
 
-	const handleChange = (event:FormEvent<HTMLInputElement| HTMLTextAreaElement>)=>{
-		const {name, value} = event.currentTarget;
-		setForm({...form, [name]:value})
-	}
+export default function ContentCreateForm({
+	isLoading,
+	onSubmit
+	}:
+	ContentCreateFormProps){
+	const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+			description: "", 
+    },
+  })
 
-	const handleSubmit = (event: FormEvent)=> {
-		event.preventDefault();
-		onSubmit(form)
-	}
+	const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    onSubmit(values);
+  }
 
 	return(
-					<form action="" className="mt-4" onSubmit={handleSubmit}>
-						<div className="grid w-full gap-1.5 mb-4"> 
-							<Label htmlFor="title">Title</Label>
-							<Input type="title" id="title" placeholder="title" name="title" 
-							onChange={handleChange}
-							disabled={isLoading}
-							/>
-						</div>
-						<div className="grid w-full gap-1.5 mb-4">
-						<Label htmlFor="message">Description</Label>
-						<Textarea 
-						placeholder="Type your description" 
-						id="message" 
-						name="description"
-						onChange={handleChange}
-						disabled={isLoading}
-						/>
-					</div>
-						<Button disabled={isLoading}>
-							{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-							Generate
-						</Button>
-					</form> 
+		<Form {...form}>
+		<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 mt-4">
+			<FormField
+				control={form.control}
+				name="title"
+				disabled={isLoading}
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>Title</FormLabel>
+						<FormControl>
+							<Input placeholder="ReactJS" {...field} />
+						</FormControl>
+						<FormDescription>
+							Please, provide a title for you content.
+						</FormDescription>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+			<FormField
+				control={form.control}
+				name="description"
+				disabled={isLoading}
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>Description</FormLabel>
+						<FormControl>
+							<Input placeholder="Write about ReactJS form validation. Provide a real life examples" {...field} />
+						</FormControl>
+						<FormDescription>
+							Please, provide a description for you content.
+						</FormDescription>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+			<Button disabled={isLoading}>
+				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+				Generate
+			</Button>
+		</form>
+	</Form>
 	)
 }

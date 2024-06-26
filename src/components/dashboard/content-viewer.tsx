@@ -2,6 +2,7 @@ import { ClipboardIcon, ShareIcon, StarIcon } from "@heroicons/react/16/solid";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import Markdown from 'react-markdown'
+import toast from "react-hot-toast";
 
 type ContentViewerProps = {
 	content:string;
@@ -9,6 +10,18 @@ type ContentViewerProps = {
 
 
 export default function ContentViewer ({content}:ContentViewerProps){
+
+	const handleCopy = async() =>{
+		try{
+			await navigator.clipboard.writeText(content);
+			toast.success('Successfully copy to clipboard');
+		}
+		catch(e){
+			console.log('[Error] Failed to copy to clipboard', e);
+			toast.error("Error occurred while to copying to clipboard");
+		}
+	};
+
 	return(
 		<Card className="mt-4">
 		<CardContent className="p-8">
@@ -22,7 +35,7 @@ export default function ContentViewer ({content}:ContentViewerProps){
 			<Button variant="outline">
 				<ShareIcon className="w-4 h-4"/>
 			</Button>
-			<Button variant="outline">
+			<Button variant="outline" onClick={handleCopy}>
 				<ClipboardIcon className="w-4 h-4" />
 			</Button>
 			<Button variant="outline">

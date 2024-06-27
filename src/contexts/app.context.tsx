@@ -2,7 +2,9 @@ import { useContext, createContext, FC, useState, ReactNode } from "react";
 
 interface IAppContext{
 	generatingContent:boolean;
-	setgeneratingContent:(value:boolean)=>void
+	setgeneratingContent:(value:boolean)=>void;
+	sidebarOpen:boolean;
+	toggleSidebar: () => void;
 }
 
 export const AppContext = createContext<IAppContext | null>(null);
@@ -21,8 +23,15 @@ interface IProps{
 
 const AppContextProvider: FC<IProps> = ({children})=>{
 	const [generatingContent, setgeneratingContent] = useState(false);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
+
+	const toggleSidebar = () =>{
+		console.log('toggling.....')
+		setSidebarOpen(!sidebarOpen);
+	}
+
 	return(
-		<AppContext.Provider value={{generatingContent, setgeneratingContent}}>
+		<AppContext.Provider value={{generatingContent, setgeneratingContent, sidebarOpen, toggleSidebar}}>
 			{children}
 		</AppContext.Provider>
 	);

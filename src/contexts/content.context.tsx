@@ -1,8 +1,12 @@
 import { TContentCreateRequestParam } from "@/shared/types/content-create-request-params";
 import { TGeneratedContent } from "@/shared/types/generated-content";
+import { TPromptHistory, TPromptLink } from "@/shared/types/prompt-history.type";
 import { generateArticle } from "@/utils/openai";
 import { FC, ReactNode, createContext, useContext, useState } from "react";
 import toast from "react-hot-toast";
+import { useLocalStorage } from 'react-use';
+import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IContentContext{
 	generatingContent:boolean;
@@ -10,6 +14,7 @@ interface IContentContext{
 	generateContent:(
 		params:TContentCreateRequestParam
 	) => Promise<string | null>
+	getPromptHistory: () => TPromptHistory[];
 }
 
 export const ContentContext = createContext<IContentContext | null>(null);
@@ -27,21 +32,26 @@ interface IProps{
 
 const ContentContextProvider: FC<IProps> = ({children})=>{
 	const [generatingContent, setgeneratingContent] = useState(false);
+	const [contentItems, setContentItems] = useLocalStorage<TGeneratedContent[]>(
+		'contentItems',
+		[],
+	);
 	const generateContent = async(params:TContentCreateRequestParam)=>{
 		let content = null; 
+		getPromptHistory();
 		setgeneratingContent(true);
 		const {title ,description} = params;
 		try {
 			content = await generateArticle(title, description);
 			if(content){
 				const generatedContentItem : TGeneratedContent ={
-					id:'12345',
+					id:uuidv4(),
 					title,
 					description,
 					content,
 					createdAt: new Date(),
-				}
-				localStorage.setItem('contentItems', JSON.stringify([generatedContentItem]))
+				};
+				setContentItems([generatedContentItem, ...(contentItems || [])])
 			}
 		} catch (error) {
 			console.log(`[Error] Failed to generate article`, error);
@@ -52,12 +62,40 @@ const ContentContextProvider: FC<IProps> = ({children})=>{
 		}
 		return content; 
 	}
+
+	const getPromptHistory = ():TPromptHistory[] =>{
+		if(!contentItems){
+			return []
+		}
+		const groupedItems = contentItems.reduce(
+			(prev: { [date:string] : TPromptLink[] }, next) => {
+			const date = dayjs(next.createdAt).format('MMM DD, YYYY');
+				if (!prev[date]) {
+					prev[date]=[];
+				}
+				prev[date].push({
+					title:next.title,
+					url:`/dashboard/content/${next.id}`,
+				});
+				return prev;
+			}, 
+		{}
+	);
+	return Object.keys(groupedItems)
+	.sort((a , b) => dayjs(b).diff(a))
+	.map((date)=>({
+		date,
+		links:groupedItems[date]
+	}));
+};
+
 	return (
 		<ContentContext.Provider
 			value={{
 				generatingContent,
 				setgeneratingContent,
 				generateContent,
+				getPromptHistory,
 			}}
 		>
 			{children}

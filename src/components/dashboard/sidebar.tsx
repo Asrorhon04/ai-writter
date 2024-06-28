@@ -4,6 +4,7 @@ import { TPromptHistory } from "@/shared/types/prompt-history.type";
 import { PencilSquareIcon } from "@heroicons/react/16/solid";
 import { Loader2 } from "lucide-react";
 import clsx from "clsx";
+import { useContentContext } from "@/contexts/content.context";
 
 const mockItems:TPromptHistory[]=[
 	{
@@ -35,7 +36,8 @@ const mockItems:TPromptHistory[]=[
 ]
 
 export default function Sidebar() {
-	const {generatingContent, sidebarOpen} = useAppContext();
+	const {sidebarOpen} = useAppContext();
+	const {generatingContent} = useContentContext();
 	return(
 		<nav className={clsx(`transition-all duration-500 h-screen overflow-x-hidden md:w-80 md:border-r md:p-4`,
 			sidebarOpen ? 'w-1/2 border-r p-2':'w-0',

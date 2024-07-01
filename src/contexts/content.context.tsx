@@ -10,11 +10,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface IContentContext{
 	generatingContent:boolean;
-	setgeneratingContent:(value:boolean)=>void;
+	setGeneratingContent:(value:boolean)=>void;
 	generateContent:(
 		params:TContentCreateRequestParam
-	) => Promise<string | null>
+	) => Promise<TGeneratedContent | null>
 	getPromptHistory: () => TPromptHistory[];
+	getContentById:(id:string) => TGeneratedContent;
+	updateById:(id:string, generateContent:TGeneratedContent)=>void;
 }
 
 export const ContentContext = createContext<IContentContext | null>(null);
@@ -31,36 +33,35 @@ interface IProps{
 }
 
 const ContentContextProvider: FC<IProps> = ({children})=>{
-	const [generatingContent, setgeneratingContent] = useState(false);
+	const [generatingContent, setGeneratingContent] = useState(false);
 	const [contentItems, setContentItems] = useLocalStorage<TGeneratedContent[]>(
 		'contentItems',
 		[],
 	);
 	const generateContent = async(params:TContentCreateRequestParam)=>{
-		let content = null; 
-		getPromptHistory();
-		setgeneratingContent(true);
+		let generatedContent: TGeneratedContent | null = null;
+		setGeneratingContent(true);
 		const {title ,description} = params;
 		try {
-			content = await generateArticle(title, description);
+			const content = await generateArticle(title, description);
 			if(content){
-				const generatedContentItem : TGeneratedContent ={
+				generatedContent ={
 					id:uuidv4(),
 					title,
 					description,
 					content,
 					createdAt: new Date(),
 				};
-				setContentItems([generatedContentItem, ...(contentItems || [])])
+				setContentItems([generatedContent, ...(contentItems || [])])
 			}
 		} catch (error) {
 			console.log(`[Error] Failed to generate article`, error);
 			toast.error("Error occurred while generating content.")
 		}
 		finally{
-			setgeneratingContent(false);
+			setGeneratingContent(false);
 		}
-		return content; 
+		return generatedContent; 
 	}
 
 	const getPromptHistory = ():TPromptHistory[] =>{
@@ -89,13 +90,32 @@ const ContentContextProvider: FC<IProps> = ({children})=>{
 	}));
 };
 
+	const getContentById = (id:string)=>{
+		const generatedContent = contentItems?.find((item)=> item.id ===id);
+		if(!generatedContent){
+			throw new Error('Content not found');
+		}
+		return generatedContent;
+	}
+
+	const updateById = (id:string, generatedContent: TGeneratedContent) =>{
+		const updatedContentItems = contentItems?.map((item)=>{
+			if(item.id === id){
+				return generatedContent;
+			}
+			return item;
+		})
+		setContentItems(updatedContentItems || [])
+	}
 	return (
 		<ContentContext.Provider
 			value={{
 				generatingContent,
-				setgeneratingContent,
+				setGeneratingContent,
 				generateContent,
 				getPromptHistory,
+				getContentById,
+				updateById,
 			}}
 		>
 			{children}

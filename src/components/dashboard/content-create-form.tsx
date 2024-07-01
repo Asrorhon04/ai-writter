@@ -6,6 +6,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
+import { Textarea } from "../ui/textarea"
 
 type ContentCreateFormProps ={
 	isLoading: boolean;
@@ -62,7 +63,11 @@ export default function ContentCreateForm({
 					<FormItem>
 						<FormLabel>Description</FormLabel>
 						<FormControl>
-							<Input placeholder="Write about ReactJS form validation. Provide a real life examples" {...field} />
+							<Textarea 
+								placeholder="Write about ReactJS form validation. Provide a real life examples" 
+								{...field}
+								rows={5}
+							/>
 						</FormControl>
 						<FormDescription>
 							Please, provide a description for you content.

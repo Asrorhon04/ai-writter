@@ -32,6 +32,17 @@ export default function ContentViewer ({generatedContent, onSave}:ContentViewerP
 		}
 	};
 
+	const handleShare =async()=>{
+		try{
+			const {origin} = window.location;
+			await navigator.clipboard.writeText(`${origin}/share/${generatedContent.id}`);
+			toast.success('Share link successfully copy to clipboard');
+		}
+		catch(e){
+			console.log('[Error] Failed to copy to clipboard', e);
+			toast.error("Error occurred while to copying to clipboard");
+		}
+	}
 	const handleEdit =() =>{
 		setMode(Mode.Edit);
 	} 
@@ -49,6 +60,7 @@ export default function ContentViewer ({generatedContent, onSave}:ContentViewerP
 		onSave({...generatedContent, content: editedContent});
 		setMode(Mode.View)
 	}
+
 
 	return mode === Mode.View ? (
 		<Card className="mt-4">
@@ -71,7 +83,7 @@ export default function ContentViewer ({generatedContent, onSave}:ContentViewerP
 				</Tooltip>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="outline">
+						<Button variant="outline" onClick={handleShare}>
 							<ShareIcon className="w-4 h-4"/>
 						</Button>
 					</TooltipTrigger>

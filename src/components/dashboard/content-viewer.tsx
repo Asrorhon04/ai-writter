@@ -1,4 +1,4 @@
-import { ClipboardIcon, ShareIcon, StarIcon } from "@heroicons/react/16/solid";
+import { ClipboardIcon, ShareIcon } from "@heroicons/react/16/solid";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import toast from "react-hot-toast";
@@ -6,6 +6,7 @@ import { Pencil } from "lucide-react";
 import { useState } from "react";
 import MDEditor from '@uiw/react-md-editor';
 import { TGeneratedContent } from "@/shared/types/generated-content";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
 
 type ContentViewerProps = {
 	generatedContent:TGeneratedContent;
@@ -57,18 +58,38 @@ export default function ContentViewer ({generatedContent, onSave}:ContentViewerP
 			</div>
 		</CardContent>
 		<CardFooter className="flex gap-2 justify-end">
-			<Button variant="outline" onClick={handleEdit}>
-				<Pencil className="w-4 h-4"/>
-			</Button>
-			<Button variant="outline">
-				<ShareIcon className="w-4 h-4"/>
-			</Button>
-			<Button variant="outline" onClick={handleCopy}>
-				<ClipboardIcon className="w-4 h-4" />
-			</Button>
-			<Button variant="outline">
-				<StarIcon className="w-4 h-4"/>
-			</Button>
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button variant="outline" onClick={handleEdit}>
+							<Pencil className="w-4 h-4"/>
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>Edit</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button variant="outline">
+							<ShareIcon className="w-4 h-4"/>
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>Share</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button variant="outline" onClick={handleCopy}>
+							<ClipboardIcon className="w-4 h-4" />
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>Copy</p>
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
 		</CardFooter>
 	</Card>
 	) : (

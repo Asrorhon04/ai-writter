@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import { ContentContextProvider } from './contexts/content.context';
 import DashboardContent from './pages/dashboard-content';
 import ContentNotFound from './components/dashboard/content-not-found';
+import Share from './pages/share';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,11 @@ const router = createBrowserRouter([
 			}
 		]
   },
+	{
+		path:'share/:id',
+		element: <Share />,
+		errorElement: <ContentNotFound />
+	}
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

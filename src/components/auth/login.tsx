@@ -12,29 +12,30 @@ import { useNavigate } from "react-router-dom";
 const formScema = z.object({
 	login:z.string().min(5).max(20),
 	password:z.string().min(4),
-	passwordRepeat: z.string().min(4)
-}).refine((data)=>data.password === data.passwordRepeat, {
-	message:'Password are not equal',
-	path:['passwordRepeat'],
 });
 
-export default function Register(){
-	const {registerUser}=useAuthContext();
+export default function Login(){
+	const {loginUser}=useAuthContext();
 	const navigate = useNavigate();
 	const form = useForm<z.infer<typeof formScema>>({
 		resolver:zodResolver(formScema),
 		defaultValues:{
 			login:'',
 			password:'',
-			passwordRepeat:'',
 		},
 	});
 
 	const handleSubmit = (values: z.infer<typeof formScema>)=>{
 		const {login, password} = values;
-		registerUser(login, password);
-		toast.success('Account created');
-		navigate('/login');
+		try {
+			loginUser(login, password);
+			toast.success('Login successful');
+			navigate('/dashboard');
+		} catch (error) {
+			if(error instanceof Error){
+				toast.error(error.message )
+			}
+		}
 	}
 	
 	return(
@@ -45,10 +46,10 @@ export default function Register(){
 					<Card className="max-w-md mx-auto">
 						<CardHeader className="space-y-1">
 							<CardTitle className="text-2xl">
-								Create an account
+								Login our account
 							</CardTitle>
 							<CardDescription>
-								Enter yout lolgin and password to create an account 
+								Enter yout lolgin and password to login to your account 
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="grid gap-4">
@@ -78,23 +79,10 @@ export default function Register(){
 									</FormItem>
 								)} 
 							/>
-							<FormField 
-								name='passwordRepeat'
-								control={form.control}
-								render={({field}) =>(
-									<FormItem>
-										<FormLabel>Password repeat</FormLabel>
-										<FormControl>
-											<Input type='password' {...field}/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} 
-							/>
 						</CardContent>
 						<CardFooter>
 							<Button className="w-full">
-								Create account
+								Login
 							</Button>
 						</CardFooter>
 					</Card>

@@ -14,6 +14,7 @@ import AuthLayout from './components/layout/auth-layout';
 import Register from './components/auth/register';
 import { AuthProvider } from './contexts/auth.context';
 import Login from './components/auth/login';
+import ProtectedRoute from './components/auth/protected-route';
 
 const router = createBrowserRouter([
   {
@@ -21,16 +22,11 @@ const router = createBrowserRouter([
     element: <h1 className='text-5xl'>Hello world!</h1>,
   },
   {
-    path: "login",
-    element: <h1 className='text-5xl'>Login</h1>,
-  },
-  {
-    path: "register",
-    element: <h1 className='text-5xl'>Register</h1>,
-  },
-  {
     path: "dashboard",
-    element: <DashboardLayout />,
+    element: 
+			<ProtectedRoute>
+				<DashboardLayout />
+			</ProtectedRoute>,
 		children:[
 			{
 				index:true,

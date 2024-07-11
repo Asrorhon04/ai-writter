@@ -8,10 +8,18 @@ import {
 import { Button } from "../ui/button"
 import { Bars3Icon } from "@heroicons/react/16/solid"
 import { useAppContext } from "@/contexts/app.context";
+import { useAuthContext } from "@/contexts/auth.context";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-
+	const navigate = useNavigate();
 	const {toggleSidebar}= useAppContext();
+	const {user, logOutUser} = useAuthContext();
+	
+	const handleLogOUt = () =>{
+		logOutUser();
+		navigate('/auth/login');
+	}
 
 	return(
 		<div className="border-b">
@@ -24,11 +32,11 @@ export default function Navbar() {
 				<h4 className="font-semibold">Dashboard</h4>
 				<div>
 					<DropdownMenu>
-						<DropdownMenuTrigger>Asrorkhon</DropdownMenuTrigger>
+						<DropdownMenuTrigger>{user?.login}</DropdownMenuTrigger>
 						<DropdownMenuContent>
 							<DropdownMenuItem>Profile</DropdownMenuItem>
 							<DropdownMenuSeparator /> 
-							<DropdownMenuItem>Logout</DropdownMenuItem>
+							<DropdownMenuItem onClick={handleLogOUt}>Logout</DropdownMenuItem>
 						</DropdownMenuContent>
 				</DropdownMenu>
 				</div>

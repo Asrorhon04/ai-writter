@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Textarea } from "../ui/textarea"
+import { useTranslation } from 'react-i18next';
 
 type ContentCreateFormProps ={
 	isLoading: boolean;
@@ -23,6 +24,7 @@ export default function ContentCreateForm({
 	onSubmit
 	}:
 	ContentCreateFormProps){
+	const { t  }=useTranslation('dashboard');
 	const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,12 +46,12 @@ export default function ContentCreateForm({
 				disabled={isLoading}
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>Title</FormLabel>
+						<FormLabel>{t('title')}</FormLabel>
 						<FormControl>
 							<Input placeholder="ReactJS" {...field} />
 						</FormControl>
 						<FormDescription>
-							Please, provide a title for you content.
+							{t('titleHint')}
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
@@ -61,16 +63,16 @@ export default function ContentCreateForm({
 				disabled={isLoading}
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>Description</FormLabel>
+						<FormLabel>{t('description')}</FormLabel>
 						<FormControl>
 							<Textarea 
-								placeholder="Write about ReactJS form validation. Provide a real life examples" 
+								placeholder={t('descriptionPlaceholder')}
 								{...field}
 								rows={5}
 							/>
 						</FormControl>
 						<FormDescription>
-							Please, provide a description for you content.
+							{t('descriptionHint')}
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
@@ -78,7 +80,7 @@ export default function ContentCreateForm({
 			/>
 			<Button disabled={isLoading}>
 				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-				Generate
+				{t('generate')}
 			</Button>
 		</form>
 	</Form>

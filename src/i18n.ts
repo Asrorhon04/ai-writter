@@ -36,7 +36,7 @@ const resources = {
 			titleHint:'Iltimos kontent uchun sarlavha kiriting',
 			description:'Tavsifi',
 			descriptionPlaceholder:'ReactJSda form validatsiyasi haqida yozing. Amaliy misollar taqdim eting',
-			descriptionHint:'Iltimos, kontent ravsifini yozing',
+			descriptionHint:'Iltimos, kontent tavsifini yozing',
 			generate:'Yaratish',
 			profile:'Sahifa',
 			logout:'Chiqish',

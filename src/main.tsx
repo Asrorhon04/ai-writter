@@ -15,13 +15,15 @@ import Register from './components/auth/register';
 import { AuthProvider } from './contexts/auth.context';
 import Login from './components/auth/login';
 import ProtectedRoute from './components/auth/protected-route';
-import './i18n';
 import HomePage from './pages/homepage';
+
+import './i18n';
+import './sentry'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <HomePage/>,
   },
   {
     path: "dashboard",
@@ -65,6 +67,7 @@ const router = createBrowserRouter([
 		]
 	}
 ]);
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
